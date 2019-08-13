@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package dda;
+
+import "google/protobuf/empty.proto";
+
+service DDAService {
+  rpc ClientStream (stream Event) returns (stream Event) {} // event stream
+  
+  rpc GetGames (google.protobuf.Empty) returns (Games) {}
+  rpc GetGame (Game) returns (Game) {}
+  rpc JoinGame (Game) returns (Game) {}
+  rpc ReadyPlayer (Game) returns (Game) {}
+  rpc StartGame (Game) returns (Game) {}
+
+  rpc GetAllocations (google.protobuf.Empty) returns (Allocations) {}
+  rpc StopAllocation (Allocation) returns (Allocation) {}
+}
+
+message Allocations {
+  repeated Allocation Allocation = 1;
+}
+
+message Allocation {
+  string ID = 1;
+}
+
+message Games {
+  repeated Game Game = 1;
+}
+
+message Game {
+  string ID = 1;
+  string Song = 2;   
+  string HomeID = 3; 
+  int32 HomeScore = 4;
+  bool HomeReady = 5;
+  string AwayID = 6; 
+  int32 AwayScore = 7;
+  bool AwayReady = 8;
+  int64	Started = 9;
+  int64 Finished = 10;
+}
+
+message Event {
+  
+}
