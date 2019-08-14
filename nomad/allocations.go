@@ -43,8 +43,8 @@ func (n *Nomad) StopAllocation(id string) error {
 	return nil
 }
 
-// GetAssignableAllocations returns a list of currently running allocations
-func (n *Nomad) GetAssignableAllocations() ([]string, error) {
+// GetRunningAllocations returns a list of currently running allocations
+func (n *Nomad) GetRunningAllocations() ([]string, error) {
 	alloc := []string{}
 	queryOptions := &api.QueryOptions{
 		AllowStale: true,
@@ -55,9 +55,7 @@ func (n *Nomad) GetAssignableAllocations() ([]string, error) {
 	}
 	runningAllocations := searchForRunning(allocationList)
 	for _, allocation := range runningAllocations {
-		if _, ok := n.Assignments[allocation.ID]; !ok {
-			alloc = append(alloc, allocation.ID)
-		}
+		alloc = append(alloc, allocation.ID)
 	}
 	return alloc, nil
 }
