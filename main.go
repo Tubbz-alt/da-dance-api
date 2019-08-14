@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/eveld/ddr-api/server"
+	"github.com/eveld/ddr-api/nomad"
 	"github.com/gorilla/mux"
 	"github.com/hashicorp/go-hclog"
 	"github.com/jmoiron/sqlx"
@@ -24,6 +25,11 @@ func main() {
 		logger.Error("Connecting to postgres", "error", err)
 	}
 
-	s := server.NewServer(logger, router, database)
+	nomad, err := nomad.Connect()
+	if err != nil {
+		logger.Error("Connecting to nomad", "error", err)
+	}
+
+	s := server.NewServer(logger, router, database, nomad)
 	s.Start(*listenAddress)
 }

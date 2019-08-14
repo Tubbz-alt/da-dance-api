@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/eveld/ddr-api/models"
+	"github.com/eveld/ddr-api/nomad"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/hashicorp/go-hclog"
@@ -19,14 +20,16 @@ type Server struct {
 	database *sqlx.DB
 	router   *mux.Router
 	logger   hclog.Logger
+	nomad    *nomad.Nomad
 }
 
 // NewServer creates a new server
-func NewServer(logger hclog.Logger, router *mux.Router, database *sqlx.DB) *Server {
+func NewServer(logger hclog.Logger, router *mux.Router, database *sqlx.DB, nomad *nomad.Nomad) *Server {
 	server := &Server{
 		logger:   logger,
 		router:   router,
 		database: database,
+		nomad:    nomad,
 	}
 
 	router.HandleFunc("/games", server.getGamesHandler).Methods(http.MethodGet)
