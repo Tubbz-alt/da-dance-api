@@ -1,7 +1,6 @@
 package server
 
 import (
-	"database/sql"
 	"encoding/json"
 	"net/http"
 
@@ -10,56 +9,15 @@ import (
 	_ "github.com/lib/pq"
 )
 
-const (
-	defaultAllocationBatchSize = 10
-)
-
-// GetAllocations gets all allocations
-func (s *Server) GetAllocations() (map[string]bool, error) {
-	allocation := map[string]bool{}
-	var tempAllocs []string
-	err := s.database.Select(&tempAllocs, "SELECT id FROM allocations")
-	if err == sql.ErrNoRows {
-		s.logger.Error("No allocations found")
-		return allocation, nil
-	}
-
-	if err != nil {
-		s.logger.Error("Get allocations", "error", err)
-		return allocation, err
-	}
-
-	for _, alloc := range tempAllocs {
-		allocation[alloc] = true
-	}
-
-	return allocation, nil
-}
-
-// CreateAllocation creates an allocation
-func (s *Server) CreateAllocation(allocation models.Allocation) (models.Allocation, error) {
-	query, err := s.database.PrepareNamed(
-		`INSERT INTO allocations (id, player)
-		VALUES(:id, :player)
-		RETURNING *`)
-	if err != nil {
-		return allocation, err
-	}
-
-	err = query.Get(&allocation, allocation)
-	if err != nil {
-		return allocation, err
-	}
-
-	return allocation, nil
-}
-
-func (s *Server) assignAllocations(playerID string) ([]string, error) {
+// AssignAllocations reads allocations from the database, compares it to a
+// running list, and assigns a player to them.
+func (s *Server) AssignAllocations(playerID string) ([]string, error) {
 	assigned := []string{}
 	existingAllocations, err := s.GetAllocations()
 	if err != nil {
 		return nil, err
 	}
+
 	runningAllocations, err := s.nomad.GetRunningAllocations()
 	if err != nil {
 		return nil, err
@@ -75,7 +33,7 @@ func (s *Server) assignAllocations(playerID string) ([]string, error) {
 			assigned = append(assigned, id)
 		}
 	}
-	
+
 	s.logger.Info("assigned allocations", "num_allocations", len(assigned), "player", playerID)
 	return assigned, nil
 }
@@ -83,7 +41,7 @@ func (s *Server) assignAllocations(playerID string) ([]string, error) {
 // Get allocations
 func (s *Server) getAllocationsHandler(w http.ResponseWriter, r *http.Request) {
 	player := r.FormValue("player")
-	allocations, err := s.assignAllocations(player)
+	allocations, err := s.AssignAllocations(player)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -96,6 +54,18 @@ func (s *Server) getAllocationsHandler(w http.ResponseWriter, r *http.Request) {
 func (s *Server) stopAllocationHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	allocationID := vars["allocation"]
+
+	if err := s.nomad.StopAllocation(allocationID); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	allocation, err := s.DeleteAllocation(models.Allocation{ID: allocationID})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	s.logger.Info("released claim", "id", allocationID, "player", allocation.Player)
 
 	out := json.NewEncoder(w)
 	out.Encode(allocationID)
