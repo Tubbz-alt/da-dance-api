@@ -6,9 +6,8 @@ import (
 
 // Nomad has a client and allocation endpoint
 type Nomad struct {
-	Client             *api.Client
-	Allocations        *api.Allocations
-	RunningAllocations []string
+	Client      *api.Client
+	Allocations *api.Allocations
 	Assignments map[string]string
 }
 
@@ -16,9 +15,6 @@ type Nomad struct {
 func Connect() (*Nomad, error) {
 	client := Nomad{}
 	if err := client.DefaultClient(); err != nil {
-		return nil, err
-	}
-	if err := client.GetRunningAllocations(); err != nil {
 		return nil, err
 	}
 	client.Assignments = map[string]string{}
@@ -47,21 +43,23 @@ func (n *Nomad) StopAllocation(id string) error {
 	return nil
 }
 
-// GetRunningAllocations returns a list of currently running allocations
-func (n *Nomad) GetRunningAllocations() error {
-	n.RunningAllocations = []string{}
+// GetAssignableAllocations returns a list of currently running allocations
+func (n *Nomad) GetAssignableAllocations() ([]string, error) {
+	alloc := []string{}
 	queryOptions := &api.QueryOptions{
 		AllowStale: true,
 	}
 	allocationList, _, err := n.Allocations.List(queryOptions)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	runningAllocations := searchForRunning(allocationList)
 	for _, allocation := range runningAllocations {
-		n.RunningAllocations = append(n.RunningAllocations, allocation.ID)
+		if _, ok := n.Assignments[allocation.ID]; !ok {
+			alloc = append(alloc, allocation.ID)
+		}
 	}
-	return nil
+	return alloc, nil
 }
 
 func searchForRunning(allocationList []*api.AllocationListStub) []*api.AllocationListStub {

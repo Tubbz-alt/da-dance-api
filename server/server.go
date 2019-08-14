@@ -39,7 +39,7 @@ func NewServer(logger hclog.Logger, router *mux.Router, database *sqlx.DB, nomad
 	router.HandleFunc("/games/{game}/players/{player}/ready", server.readyGameHandler).Methods(http.MethodPost)
 	router.HandleFunc("/games/{game}/start", server.startGameHandler).Methods(http.MethodPost)
 
-	router.HandleFunc("/allocations", server.getAllocationsHandler).Methods(http.MethodGet)
+	router.HandleFunc("/allocations", server.getAllocationsHandler).Queries("player", "{player}").Methods(http.MethodGet)
 	router.HandleFunc("/allocations/{allocation}/stop", server.stopAllocationHandler).Methods(http.MethodGet)
 
 	return server
@@ -299,19 +299,4 @@ func (s *Server) startGameHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	out := json.NewEncoder(w)
 	out.Encode(game)
-}
-
-// Get allocations
-func (s *Server) getAllocationsHandler(w http.ResponseWriter, r *http.Request) {
-	out := json.NewEncoder(w)
-	out.Encode([]string{})
-}
-
-// Stop an allocation
-func (s *Server) stopAllocationHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	allocationID := vars["allocation"]
-
-	out := json.NewEncoder(w)
-	out.Encode(allocationID)
 }
