@@ -147,3 +147,23 @@ Response:
     "stopped": 0
 }
 ```
+
+## Get a list of unassigned allocations, maximum 10
+Request:
+```
+curl localhost:8080/allocations?player=nickyjams
+```
+Response:
+```
+["77f06c2a-d2f2-9a25-0ad6-4d7e3d9fa4e7"]
+```
+
+## Stop an allocation
+Request:
+```
+curl localhost:8080/allocations/f1ba4520-9180-056b-2e9b-ed62c593e434/stop
+```
+Response:
+```
+"f1ba4520-9180-056b-2e9b-ed62c593e434"
+```
