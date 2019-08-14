@@ -1,13 +1,13 @@
 ---
 CREATE TABLE games (
-    id varchar(255) primary key,
-    song varchar(255),
-    home_id varchar(255),
-    home_score int,
-    home_ready boolean,
-    away_id varchar(255),
-    away_score int,
-    away_ready boolean,
-    started timestamp without time zone,
-    finished timestamp without time zone
+    id VARCHAR(255) PRIMARY KEY,
+    song VARCHAR(255) DEFAULT 'Rick Astley - Never gonna give you up',
+    home_id VARCHAR(255) DEFAULT '',
+    home_score INT DEFAULT 0,
+    home_ready BOOLEAN DEFAULT 'FAlse',
+    away_id VARCHAR(255) DEFAULT '',
+    away_score INT DEFAULT 0,
+    away_ready BOOLEAN DEFAULT 'FAlse',
+    started BIGINT DEFAULT 0,
+    finished BIGINT DEFAULT 0
 );
