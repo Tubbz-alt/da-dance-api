@@ -6,7 +6,7 @@ import (
 
 	"github.com/eveld/ddr-api/models"
 	"github.com/gorilla/mux"
-	_ "github.com/lib/pq"
+	// _ "github.com/lib/pq"
 )
 
 // AssignAllocations reads allocations from the database, compares it to a

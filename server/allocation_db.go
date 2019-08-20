@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	"github.com/eveld/ddr-api/models"
-	_ "github.com/lib/pq"
 )
 
 const (

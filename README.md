@@ -11,7 +11,7 @@ docker run -ti -p 5432:5432 dda-postgres
 ## Get all games
 Request:
 ```
-curl localhost:8080/games
+curl localhost:9090/games
 ```
 Response:
 ```
@@ -21,7 +21,7 @@ Response:
 ## Create a new game
 Request:
 ```
-curl -XPOST localhost:8080/game/new
+curl -XPOST localhost:9090/game/new
 ```
 Response:
 ```
@@ -44,7 +44,7 @@ Response:
 ## Get the details of an existing game
 Request:
 ```
-curl localhost:8080/game/123
+curl localhost:9090/game/123
 ```
 Response:
 ```
@@ -67,7 +67,7 @@ Response:
 ## Join an existing game
 Request:
 ```
-curl -XPOST localhost:8080/game/123/join
+curl -XPOST localhost:9090/game/123/join
 ```
 Response:
 ```
@@ -95,7 +95,7 @@ Response:
 ## Set the player status to ready
 Request:
 ```
-curl -XPOST localhost:8080/game/123/players/abc/ready
+curl -XPOST localhost:9090/game/123/players/abc/ready
 ```
 Response:
 ```
@@ -123,7 +123,7 @@ Response:
 ## Start an existing game
 Request:
 ```
-curl -XPOST localhost:8080/game/123/start
+curl -XPOST localhost:9090/game/123/start
 ```
 Response:
 ```
@@ -151,7 +151,7 @@ Response:
 ## Get a list of unassigned allocations, maximum 10
 Request:
 ```
-curl localhost:8080/allocations?player=nickyjams
+curl localhost:9090/allocations?player=nickyjams
 ```
 Response:
 ```
@@ -161,7 +161,7 @@ Response:
 ## Stop an allocation
 Request:
 ```
-curl localhost:8080/allocations/f1ba4520-9180-056b-2e9b-ed62c593e434/stop
+curl localhost:9090/allocations/f1ba4520-9180-056b-2e9b-ed62c593e434/stop
 ```
 Response:
 ```
