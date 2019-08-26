@@ -28,7 +28,7 @@ Response:
 {
     "id": "123",
     "host": "abc",
-    "song": "Techno shit",
+    "song": "Rick Astley - Never gonna give you up",
     "players": {
         "abc": {
             "id": "abc",
@@ -51,7 +51,7 @@ Response:
 {
     "id": "123",
     "host": "abc",
-    "song": "Techno shit",
+    "song": "Rick Astley - Never gonna give you up",
     "players": {
         "abc": {
             "id": "abc",
@@ -74,7 +74,7 @@ Response:
 {
     "id": "123",
     "host": "abc",
-    "song": "Techno shit",
+    "song": "Rick Astley - Never gonna give you up",
     "players": {
         "abc": {
             "id": "abc",
@@ -102,7 +102,7 @@ Response:
 {
     "id": "123",
     "host": "abc",
-    "song": "Techno shit",
+    "song": "Rick Astley - Never gonna give you up",
     "players": {
         "abc": {
             "id": "abc",
@@ -130,7 +130,7 @@ Response:
 {
     "id": "123",
     "host": "abc",
-    "song": "Techno shit",
+    "song": "Rick Astley - Never gonna give you up",
     "players": {
         "abc": {
             "id": "abc",
