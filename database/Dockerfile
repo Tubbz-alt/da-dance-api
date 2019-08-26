@@ -1,6 +1,6 @@
 FROM postgres:11
-ENV POSTGRES_DB "dda"
-ENV POSTGRES_USER "secret_user"
-ENV POSTGRES_PASSWORD "secret_password"
+ENV POSTGRES_DB ""
+ENV POSTGRES_USER ""
+ENV POSTGRES_PASSWORD ""
 
 COPY sql/ /docker-entrypoint-initdb.d/
