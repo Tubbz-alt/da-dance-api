@@ -1,4 +1,4 @@
-job "dance" {
+job "dance-api" {
     datacenters = ["dc1"]
     type = "service"
 
@@ -7,6 +7,9 @@ job "dance" {
 
         network {
             mode  = "bridge"
+            port "http" {
+                to = 9090
+            }
         }
 
         service {
@@ -29,7 +32,7 @@ job "dance" {
             driver = "docker"
 
             env {
-                LISTEN_ADDR = "localhost:9090"
+                LISTEN_ADDR = "0.0.0.0:9090"
                 POSTGRES_HOST = "localhost"
                 POSTGRES_PORT = 5432
                 POSTGRES_USER = "secret_user"
@@ -39,37 +42,6 @@ job "dance" {
 
             config {
                 image = "eveld/da-dance-api"
-            }
-        }
-    }
-
-    group "database" {
-        count = 1
-
-        network {
-            mode  = "bridge"
-        }
-
-        service {
-            name = "dance-database"
-            port = 5432
-
-            connect {
-                sidecar_service {}
-            }
-        }
-
-        task "postgres" {
-            driver = "docker"
-
-            env {
-                POSTGRES_DB = "dda"
-                POSTGRES_USER = "secret_user"
-                POSTGRES_PASSWORD = "secret_password"
-            }
-
-            config {
-                image = "eveld/da-dance-database"
             }
         }
     }
