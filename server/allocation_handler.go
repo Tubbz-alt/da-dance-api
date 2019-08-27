@@ -3,6 +3,7 @@ package server
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/eveld/ddr-api/models"
 	"github.com/gorilla/mux"
@@ -11,7 +12,7 @@ import (
 
 // AssignAllocations reads allocations from the database, compares it to a
 // running list, and assigns a player to them.
-func (s *Server) AssignAllocations(playerID string) ([]string, error) {
+func (s *Server) AssignAllocations(playerID string, count int) ([]string, error) {
 	assigned := []string{}
 	existingAllocations, err := s.GetAllocations()
 	if err != nil {
@@ -25,7 +26,7 @@ func (s *Server) AssignAllocations(playerID string) ([]string, error) {
 
 	for _, id := range runningAllocations {
 		_, exists := existingAllocations[id]
-		if !exists && len(assigned) < defaultAllocationBatchSize {
+		if !exists && len(assigned) < defaultAllocationBatchSize && len(assigned) < count {
 			_, err := s.CreateAllocation(models.Allocation{ID: id, Player: playerID})
 			if err != nil {
 				return nil, err
@@ -41,7 +42,15 @@ func (s *Server) AssignAllocations(playerID string) ([]string, error) {
 // Get allocations
 func (s *Server) getAllocationsHandler(w http.ResponseWriter, r *http.Request) {
 	player := r.FormValue("player")
-	allocations, err := s.AssignAllocations(player)
+	count := r.FormValue("count")
+
+	allocationCount, err := strconv.Atoi(count)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	allocations, err := s.AssignAllocations(player, allocationCount)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
