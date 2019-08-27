@@ -32,6 +32,7 @@ job "dance-api" {
             driver = "docker"
 
             env {
+                NOMAD_ADDR = "http://${attr.unique.network.ip-address}:4646"
                 LISTEN_ADDR = "0.0.0.0:9090"
                 POSTGRES_HOST = "localhost"
                 POSTGRES_PORT = 5432
@@ -41,6 +42,7 @@ job "dance-api" {
             }
 
             config {
+                force_pull = true
                 image = "eveld/da-dance-api"
             }
         }

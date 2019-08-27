@@ -26,7 +26,7 @@ func (s *Server) AssignAllocations(playerID string, count int) ([]string, error)
 
 	for _, id := range runningAllocations {
 		_, exists := existingAllocations[id]
-		if !exists && len(assigned) < defaultAllocationBatchSize && len(assigned) < count {
+		if !exists && len(assigned) < count {
 			_, err := s.CreateAllocation(models.Allocation{ID: id, Player: playerID})
 			if err != nil {
 				return nil, err
