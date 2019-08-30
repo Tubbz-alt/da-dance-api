@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"github.com/eveld/ddr-api/nomad"
-	"github.com/eveld/ddr-api/server"
+	"github.com/hashicorp/da-dance-api/nomad"
+	"github.com/hashicorp/da-dance-api/server"
 	"github.com/gorilla/mux"
 	"github.com/hashicorp/go-hclog"
 	"github.com/jmoiron/sqlx"

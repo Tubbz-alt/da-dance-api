@@ -3,7 +3,7 @@ package server
 import (
 	"net/http"
 
-	"github.com/eveld/ddr-api/nomad"
+	"github.com/hashicorp/da-dance-api/nomad"
 	"github.com/gorilla/mux"
 	"github.com/hashicorp/go-hclog"
 	"github.com/jmoiron/sqlx"

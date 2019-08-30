@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/eveld/ddr-api/models"
+	"github.com/hashicorp/da-dance-api/models"
 )
 
 func (s *Server) getScoresHandler(w http.ResponseWriter, r *http.Request) {

@@ -3,7 +3,7 @@ package server
 import (
 	"database/sql"
 
-	"github.com/eveld/ddr-api/models"
+	"github.com/hashicorp/da-dance-api/models"
 )
 
 // GetGames gets all games

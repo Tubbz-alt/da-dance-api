@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/eveld/ddr-api/models"
+	"github.com/hashicorp/da-dance-api/models"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 )

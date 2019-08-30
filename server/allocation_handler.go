@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/eveld/ddr-api/models"
+	"github.com/hashicorp/da-dance-api/models"
 	"github.com/gorilla/mux"
 	// _ "github.com/lib/pq"
 )

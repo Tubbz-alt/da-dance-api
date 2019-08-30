@@ -1,4 +1,4 @@
-module github.com/eveld/ddr-api
+module github.com/hashicorp/da-dance-api
 
 go 1.12
 

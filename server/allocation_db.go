@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/eveld/ddr-api/models"
+	"github.com/hashicorp/da-dance-api/models"
 )
 
 const (
