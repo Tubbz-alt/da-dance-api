@@ -3,8 +3,8 @@ package server
 import (
 	"net/http"
 
-	"github.com/hashicorp/da-dance-api/nomad"
 	"github.com/gorilla/mux"
+	"github.com/hashicorp/da-dance-api/nomad"
 	"github.com/hashicorp/go-hclog"
 	"github.com/jmoiron/sqlx"
 )
@@ -27,10 +27,10 @@ func NewServer(logger hclog.Logger, router *mux.Router, database *sqlx.DB, nomad
 	}
 
 	router.HandleFunc("/games", server.getGamesHandler).Methods(http.MethodGet)
-	router.HandleFunc("/games/new", server.createGameHandler).Methods(http.MethodPost)
+	router.HandleFunc("/games/new", server.createGameHandler).Queries("player", "{player}").Methods(http.MethodPost)
 	router.HandleFunc("/games/{game}", server.getGameHandler).Methods(http.MethodGet)
 	router.HandleFunc("/games/{game}", server.deleteGameHandler).Methods(http.MethodDelete)
-	router.HandleFunc("/games/{game}/join", server.joinGameHandler).Methods(http.MethodPost)
+	router.HandleFunc("/games/{game}/join", server.joinGameHandler).Queries("player", "{player}").Methods(http.MethodPost)
 	router.HandleFunc("/games/{game}/leave", server.leaveGameHandler).Queries("player", "{player}").Methods(http.MethodPost)
 	router.HandleFunc("/games/{game}/ready", server.readyGameHandler).Queries("player", "{player}").Methods(http.MethodPost)
 	router.HandleFunc("/games/{game}/start", server.startGameHandler).Methods(http.MethodPost)

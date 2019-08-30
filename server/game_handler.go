@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/hashicorp/da-dance-api/models"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"github.com/hashicorp/da-dance-api/models"
 )
 
 // Get all games
@@ -24,8 +24,8 @@ func (s *Server) getGamesHandler(w http.ResponseWriter, r *http.Request) {
 
 // Create a new game
 func (s *Server) createGameHandler(w http.ResponseWriter, r *http.Request) {
+	playerID := r.FormValue("player")
 	gameID := uuid.New().String()
-	playerID := uuid.New().String()
 
 	game := models.Game{
 		ID:        gameID,
@@ -69,6 +69,7 @@ func (s *Server) deleteGameHandler(w http.ResponseWriter, r *http.Request) {
 func (s *Server) joinGameHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	gameID := vars["game"]
+	playerID := r.FormValue("player")
 
 	game, err := s.GetGame(gameID)
 	if err != nil {
@@ -86,7 +87,7 @@ func (s *Server) joinGameHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	game.AwayID = uuid.New().String()
+	game.AwayID = playerID
 	game, err = s.UpdateGame(game)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
