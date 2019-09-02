@@ -27,21 +27,21 @@ func NewServer(logger hclog.Logger, router *mux.Router, database *sqlx.DB, nomad
 	}
 
 	router.HandleFunc("/games", server.getGamesHandler).Methods(http.MethodGet)
-	router.HandleFunc("/games/new", server.createGameHandler).Queries("player", "{player}").Methods(http.MethodPost)
+	router.HandleFunc("/games/new", server.createGameHandler).Methods(http.MethodPost)
 	router.HandleFunc("/games/{game}", server.getGameHandler).Methods(http.MethodGet)
 	router.HandleFunc("/games/{game}", server.deleteGameHandler).Methods(http.MethodDelete)
-	router.HandleFunc("/games/{game}/join", server.joinGameHandler).Queries("player", "{player}").Methods(http.MethodPost)
-	router.HandleFunc("/games/{game}/leave", server.leaveGameHandler).Queries("player", "{player}").Methods(http.MethodPost)
-	router.HandleFunc("/games/{game}/ready", server.readyGameHandler).Queries("player", "{player}").Methods(http.MethodPost)
+	router.HandleFunc("/games/{game}/join", server.joinGameHandler).Methods(http.MethodPost)
+	router.HandleFunc("/games/{game}/leave", server.leaveGameHandler).Methods(http.MethodPost)
+	router.HandleFunc("/games/{game}/ready", server.readyGameHandler).Methods(http.MethodPost)
 	router.HandleFunc("/games/{game}/start", server.startGameHandler).Methods(http.MethodPost)
 
-	router.HandleFunc("/allocations", server.getAllocationsHandler).Queries("player", "{player}", "count", "{count}").Methods(http.MethodGet)
-	router.HandleFunc("/allocations", server.clearAllocationsHandler).Methods(http.MethodDelete)
-	router.HandleFunc("/allocations/{allocation}/stop", server.stopAllocationHandler).Methods(http.MethodPost)
-	router.HandleFunc("/allocations/{allocation}", server.clearAllocationHandler).Methods(http.MethodDelete)
+	router.HandleFunc("/games/{game}/allocations", server.getAllocationsHandler).Methods(http.MethodGet)
+	router.HandleFunc("/games/{game}/allocations", server.clearAllocationsHandler).Methods(http.MethodDelete)
+	router.HandleFunc("/games/{game}/allocations/{allocation}/stop", server.stopAllocationHandler).Methods(http.MethodPost)
+	router.HandleFunc("/games/{game}/allocations/{allocation}", server.clearAllocationHandler).Methods(http.MethodDelete)
 
-	router.HandleFunc("/scores", server.getScoresHandler).Methods(http.MethodGet)
-	router.HandleFunc("/scores/new", server.createScoreHandler).Queries("player", "{player}", "game", "{game}", "points", "{points}").Methods(http.MethodPost)
+	router.HandleFunc("/games/{game}/scores", server.getScoresHandler).Methods(http.MethodGet)
+	router.HandleFunc("/games/{game}/scores/new", server.createScoreHandler).Methods(http.MethodPost)
 
 	return server
 }

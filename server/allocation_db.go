@@ -2,7 +2,6 @@ package server
 
 import (
 	"database/sql"
-	"errors"
 
 	"github.com/hashicorp/da-dance-api/models"
 )
@@ -12,32 +11,27 @@ const (
 )
 
 // GetAllocations gets all allocations
-func (s *Server) GetAllocations() (map[string]string, error) {
-	allocation := map[string]string{}
-	var tempAllocs []models.Allocation
-	err := s.database.Select(&tempAllocs, "SELECT * FROM allocations")
+func (s *Server) GetAllocations() ([]string, error) {
+	var allocations []string
+	err := s.database.Select(&allocations, "SELECT id FROM allocations")
 	if err == sql.ErrNoRows {
 		s.logger.Error("No allocations found")
-		return allocation, nil
+		return allocations, nil
 	}
 
 	if err != nil {
 		s.logger.Error("Get allocations", "error", err)
-		return allocation, err
+		return allocations, err
 	}
 
-	for _, alloc := range tempAllocs {
-		allocation[alloc.ID] = alloc.Player
-	}
-
-	return allocation, nil
+	return allocations, nil
 }
 
 // CreateAllocation creates an allocation
 func (s *Server) CreateAllocation(allocation models.Allocation) (models.Allocation, error) {
 	query, err := s.database.PrepareNamed(
-		`INSERT INTO allocations (id, player)
-		VALUES(:id, :player)
+		`INSERT INTO allocations (id)
+		VALUES(:id)
 		RETURNING *`)
 	if err != nil {
 		return allocation, err
@@ -52,24 +46,19 @@ func (s *Server) CreateAllocation(allocation models.Allocation) (models.Allocati
 }
 
 // DeleteAllocation removes an allocation to demonstrate it is released
-func (s *Server) DeleteAllocation(allocation models.Allocation) (models.Allocation, error) {
+func (s *Server) DeleteAllocation(allocation models.Allocation) error {
 	query, err := s.database.PrepareNamed(
 		`DELETE FROM allocations WHERE id=:id RETURNING *`)
-
 	if err != nil {
-		return allocation, err
+		return err
 	}
 
-	err = query.Get(&allocation, allocation)
-	if err == sql.ErrNoRows {
-		return allocation, errors.New("Allocation not found")
-	}
-
+	_, err = query.Exec(allocation)
 	if err != nil {
-		return allocation, err
+		return err
 	}
 
-	return allocation, nil
+	return nil
 }
 
 // DeleteAllocations removes all allocations

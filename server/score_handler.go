@@ -3,10 +3,16 @@ package server
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 
+	"github.com/gorilla/mux"
 	"github.com/hashicorp/da-dance-api/models"
 )
+
+// ScoreRequest holds score data.
+type ScoreRequest struct {
+	Player string `json:"player"`
+	Points int    `json:"points"`
+}
 
 func (s *Server) getScoresHandler(w http.ResponseWriter, r *http.Request) {
 	scores, err := s.GetScores()
@@ -20,20 +26,20 @@ func (s *Server) getScoresHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) createScoreHandler(w http.ResponseWriter, r *http.Request) {
-	player := r.FormValue("player")
-	game := r.FormValue("game")
-	p := r.FormValue("points")
+	vars := mux.Vars(r)
+	gameID := vars["game"]
 
-	points, err := strconv.Atoi(p)
+	var sr ScoreRequest
+	err := json.NewDecoder(r.Body).Decode(&sr)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	score := models.Score{
-		Player: player,
-		Game:   game,
-		Points: points,
+		Game:   gameID,
+		Player: sr.Player,
+		Points: sr.Points,
 	}
 
 	insertedScore, err := s.CreateScore(score)

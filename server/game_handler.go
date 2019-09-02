@@ -10,6 +10,12 @@ import (
 	"github.com/hashicorp/da-dance-api/models"
 )
 
+// GameRequest holds game data.
+type GameRequest struct {
+	Player string `json:"player"`
+	Song   string `json:"song"`
+}
+
 // Get all games
 func (s *Server) getGamesHandler(w http.ResponseWriter, r *http.Request) {
 	games, err := s.GetGames()
@@ -24,13 +30,19 @@ func (s *Server) getGamesHandler(w http.ResponseWriter, r *http.Request) {
 
 // Create a new game
 func (s *Server) createGameHandler(w http.ResponseWriter, r *http.Request) {
-	playerID := r.FormValue("player")
 	gameID := uuid.New().String()
+
+	var gr GameRequest
+	err := json.NewDecoder(r.Body).Decode(&gr)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	game := models.Game{
 		ID:        gameID,
-		Song:      "first song",
-		HomeID:    playerID,
+		Song:      gr.Song,
+		HomeID:    gr.Player,
 		HomeScore: 0,
 		HomeReady: false,
 		AwayID:    "",
@@ -40,7 +52,7 @@ func (s *Server) createGameHandler(w http.ResponseWriter, r *http.Request) {
 		Finished:  0,
 	}
 
-	game, err := s.CreateGame(game)
+	game, err = s.CreateGame(game)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -69,7 +81,13 @@ func (s *Server) deleteGameHandler(w http.ResponseWriter, r *http.Request) {
 func (s *Server) joinGameHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	gameID := vars["game"]
-	playerID := r.FormValue("player")
+
+	var gr GameRequest
+	err := json.NewDecoder(r.Body).Decode(&gr)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	game, err := s.GetGame(gameID)
 	if err != nil {
@@ -87,7 +105,7 @@ func (s *Server) joinGameHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	game.AwayID = playerID
+	game.AwayID = gr.Player
 	game, err = s.UpdateGame(game)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -103,7 +121,12 @@ func (s *Server) leaveGameHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	gameID := vars["game"]
 
-	playerID := r.FormValue("player")
+	var gr GameRequest
+	err := json.NewDecoder(r.Body).Decode(&gr)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	game, err := s.GetGame(gameID)
 	if err != nil {
@@ -111,10 +134,10 @@ func (s *Server) leaveGameHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if game.HomeID == playerID {
+	if gr.Player == game.HomeID {
 		game.HomeID = ""
 		game.HomeReady = false
-	} else if game.AwayID == playerID {
+	} else if gr.Player == game.AwayID {
 		game.AwayID = ""
 		game.AwayReady = false
 	}
@@ -134,7 +157,12 @@ func (s *Server) readyGameHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	gameID := vars["game"]
 
-	playerID := r.FormValue("player")
+	var gr GameRequest
+	err := json.NewDecoder(r.Body).Decode(&gr)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	game, err := s.GetGame(gameID)
 	if err != nil {
@@ -142,9 +170,9 @@ func (s *Server) readyGameHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if playerID == game.HomeID {
+	if gr.Player == game.HomeID {
 		game.HomeReady = !game.HomeReady
-	} else if playerID == game.AwayID {
+	} else if gr.Player == game.AwayID {
 		game.AwayReady = !game.AwayReady
 	} else {
 		http.Error(w, "Unknown player", http.StatusInternalServerError)
@@ -179,7 +207,6 @@ func (s *Server) getGameHandler(w http.ResponseWriter, r *http.Request) {
 // Start existing game
 func (s *Server) startGameHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-
 	gameID := vars["game"]
 
 	game, err := s.GetGame(gameID)
