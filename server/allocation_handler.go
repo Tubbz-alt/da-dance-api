@@ -79,3 +79,32 @@ func (s *Server) stopAllocationHandler(w http.ResponseWriter, r *http.Request) {
 	out := json.NewEncoder(w)
 	out.Encode(allocationID)
 }
+
+// Clear an allocation
+func (s *Server) clearAllocationHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	allocationID := vars["allocation"]
+
+	allocation, err := s.DeleteAllocation(models.Allocation{ID: allocationID})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	s.logger.Info("released claim", "id", allocationID, "player", allocation.Player)
+
+	out := json.NewEncoder(w)
+	out.Encode(allocationID)
+}
+
+// Clear all allocation
+func (s *Server) clearAllocationsHandler(w http.ResponseWriter, r *http.Request) {
+	err := s.DeleteAllocations()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	s.logger.Info("released all claims")
+
+	out := json.NewEncoder(w)
+	out.Encode(true)
+}

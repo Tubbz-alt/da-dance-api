@@ -43,7 +43,7 @@ job "dance-api" {
 
             config {
                 force_pull = true
-                image = "eveld/da-dance-api"
+                image = "eveld/da-dance-api:v0.1.1"
             }
         }
     }

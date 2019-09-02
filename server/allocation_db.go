@@ -71,3 +71,19 @@ func (s *Server) DeleteAllocation(allocation models.Allocation) (models.Allocati
 
 	return allocation, nil
 }
+
+// DeleteAllocations removes all allocations
+func (s *Server) DeleteAllocations() error {
+	query, err := s.database.Prepare(
+		`TRUNCATE allocations`)
+	if err != nil {
+		return err
+	}
+
+	_, err = query.Exec()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
