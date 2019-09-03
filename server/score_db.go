@@ -2,6 +2,7 @@ package server
 
 import (
 	"database/sql"
+
 	"github.com/hashicorp/da-dance-api/models"
 )
 
@@ -74,10 +75,31 @@ func (s *Server) CreateScore(score models.Score) (models.Score, error) {
 	return score, nil
 }
 
-// GetScores creates a scores
-func (s *Server) GetScores() ([]models.Score, error) {
+// GetAllScores creates a scores
+func (s *Server) GetAllScores() ([]models.Score, error) {
 	scores := []models.Score{}
 	err := s.database.Select(&scores, "SELECT * FROM scores ORDER BY points DESC LIMIT 10")
+	if err == sql.ErrNoRows {
+		s.logger.Error("No scores found")
+		return scores, nil
+	}
+
+	if err != nil {
+		s.logger.Error("Get scores", "error", err)
+		return scores, err
+	}
+
+	return scores, nil
+}
+
+// GetScores creates a scores
+func (s *Server) GetScores(game string) ([]models.Score, error) {
+	params := map[string]interface{}{
+		"game": game,
+	}
+	scores := []models.Score{}
+	query, err := s.database.PrepareNamed(`SELECT * FROM scores WHERE game = :game`)
+	err = query.Select(&scores, params)
 	if err == sql.ErrNoRows {
 		s.logger.Error("No scores found")
 		return scores, nil
