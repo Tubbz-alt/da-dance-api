@@ -33,6 +33,7 @@ job "dance-api" {
 
             env {
                 NOMAD_ADDR = "http://${attr.unique.network.ip-address}:4646"
+                NOMAD_JOB_ID = "dance-target"
                 LISTEN_ADDR = "0.0.0.0:9090"
                 POSTGRES_HOST = "localhost"
                 POSTGRES_PORT = 5432
