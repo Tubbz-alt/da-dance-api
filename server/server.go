@@ -35,7 +35,7 @@ func NewServer(logger hclog.Logger, router *mux.Router, database *sqlx.DB, nomad
 	router.HandleFunc("/games/{game}/ready", server.readyGameHandler).Methods(http.MethodPost)
 	router.HandleFunc("/games/{game}/start", server.startGameHandler).Methods(http.MethodPost)
 
-	router.HandleFunc("/games/{game}/allocations", server.getAllocationsHandler).Methods(http.MethodGet)
+	router.HandleFunc("/games/{game}/allocations", server.getAllocationsHandler).Queries("count", "{count}").Methods(http.MethodGet)
 	router.HandleFunc("/games/{game}/allocations", server.clearAllocationsHandler).Methods(http.MethodDelete)
 	router.HandleFunc("/games/{game}/allocations/{allocation}/stop", server.stopAllocationHandler).Methods(http.MethodPost)
 	router.HandleFunc("/games/{game}/allocations/{allocation}", server.clearAllocationHandler).Methods(http.MethodDelete)

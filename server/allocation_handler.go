@@ -3,6 +3,7 @@ package server
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/hashicorp/da-dance-api/models"
@@ -53,14 +54,14 @@ func (s *Server) AssignAllocations(count int) ([]string, error) {
 
 // Get allocations
 func (s *Server) getAllocationsHandler(w http.ResponseWriter, r *http.Request) {
-	var ar AllocationRequest
-	err := json.NewDecoder(r.Body).Decode(&ar)
+	c := r.FormValue("count")
+	count, err := strconv.Atoi(c)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	allocations, err := s.AssignAllocations(ar.Count)
+	allocations, err := s.AssignAllocations(count)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
