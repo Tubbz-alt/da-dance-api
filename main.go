@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 
+	"github.com/gorilla/mux"
 	"github.com/hashicorp/da-dance-api/nomad"
 	"github.com/hashicorp/da-dance-api/server"
-	"github.com/gorilla/mux"
 	"github.com/hashicorp/go-hclog"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -20,6 +20,7 @@ var databasePort = env.Int("POSTGRES_PORT", false, 5432, "Port of the PostgreSQL
 var databaseUser = env.String("POSTGRES_USER", true, "", "Username of the PostgreSQL database")
 var databasePassword = env.String("POSTGRES_PASSWORD", true, "", "Password of the PostgreSQL database")
 var databaseName = env.String("POSTGRES_DATABASE", true, "", "Name of the PostgreSQL database")
+var nomadJobID = env.String("NOMAD_JOB_ID", true, "", "ID of a Nomad job for whacking")
 
 func main() {
 	logger = hclog.Default()
@@ -34,7 +35,7 @@ func main() {
 		logger.Error("Connecting to postgres", "error", err)
 	}
 
-	nomad, err := nomad.Connect()
+	nomad, err := nomad.Connect(*nomadJobID)
 	if err != nil {
 		logger.Error("Connecting to nomad", "error", err)
 	}

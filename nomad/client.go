@@ -8,12 +8,16 @@ import (
 type Nomad struct {
 	Client      *api.Client
 	Allocations *api.Allocations
+	Jobs        *api.Jobs
 	Assignments map[string]string
+	JobID       string
 }
 
 // Connect creates a nomad client and initializes with a list of running allocations
-func Connect() (*Nomad, error) {
-	client := Nomad{}
+func Connect(jobID string) (*Nomad, error) {
+	client := Nomad{
+		JobID: jobID,
+	}
 	if err := client.DefaultClient(); err != nil {
 		return nil, err
 	}
@@ -30,6 +34,7 @@ func (n *Nomad) DefaultClient() error {
 	}
 	n.Client = client
 	n.Allocations = client.Allocations()
+	n.Jobs = client.Jobs()
 	return nil
 }
 
@@ -49,7 +54,7 @@ func (n *Nomad) GetRunningAllocations() ([]string, error) {
 	queryOptions := &api.QueryOptions{
 		AllowStale: true,
 	}
-	allocationList, _, err := n.Allocations.List(queryOptions)
+	allocationList, _, err := n.Jobs.Allocations(n.JobID, true, queryOptions)
 	if err != nil {
 		return nil, err
 	}
