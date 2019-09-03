@@ -28,7 +28,7 @@ job "dance-database" {
             }
 
             config {
-                image = "eveld/da-dance-database"
+                image = "eveld/da-dance-database:v0.1.0"
             }
         }
     }
