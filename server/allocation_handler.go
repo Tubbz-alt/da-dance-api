@@ -85,7 +85,7 @@ func (s *Server) stopAllocationHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	s.logger.Info("released claim", "id", allocationID)
+	s.logger.Info("killed allocation", "id", allocationID)
 
 	out := json.NewEncoder(w)
 	out.Encode(allocationID)
