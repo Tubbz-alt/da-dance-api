@@ -3,7 +3,7 @@ job "dance-target" {
     type = "service"
 
     group "sitting" {
-        count = 20
+        count = 40
 
         network {
             mode = "bridge"
